@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+:root {
+    --green: rgb(30, 190, 70);
+}
+html * {
+    margin: 0;
+}
+body {
+    font: 1.125rem 'Baloo 2', Helvetica, Arial;
+    background:
+        radial-gradient(black 15%, transparent 16%) 0 0,
+        radial-gradient(black 15%, transparent 16%) 8px 8px,
+        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+    background-color:#282828;
+    background-size:16px 16px;
+}
+
+h1 { font-weight: normal }
+
+#mainform, .results, .results > * {
+    display: grid;
+    grid-template-columns: 49% 49%;
+    grid-gap: 2%;
+    padding: 20px;
+}
+
+#mainform > div,
+.results > div {
+    border:1px solid #333;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: #ccc;
+    text-shadow: 2px 2px black;
+    background: rgba(0,0,0,.4);
+}
+#mainform > div label {
+    font-size: xx-large;
+}
+#mainform > div textarea {
+    display: block;
+    width: 95%;
+    height: 15em;
+    border-radius: 1em;
+    padding: 0.5em;
+    font-size: large;
+}
+#mainform > div > p {
+    text-align: right;
+    color:whitesmoke
+}
+#mainform > div.submit {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  text-align: center;
+  background-color: transparent;
+}
+#mainform > div.submit [type="submit"] {
+    font-size: x-large;
+    background: #111;
+    border-radius: 1em;
+    border: 1px solid #333;
+    padding: .25em 1em;
+    color: #eee
+}
+#mainform > div.submit [type="submit"]:active {
+    color:rgb(30, 190, 70)
+}
+
+.flex-container {
+    display: flex; /* or inline-flex */
+    flex-wrap: wrap;
+    justify-content: space-between
+ }
+
+ table caption {
+     white-space: nowrap;
+ }
+ table th {
+     text-align: left;
+ }
+ table th, table td {
+    border-bottom: 1px dotted #333;
+ }
+
+meter, .fallback-meter { 
+    /* Reset the default appearance */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 1.5em 0;
+    height: 2em;
+}
+.fallback-meter span { display:block; }
+
+meter::-webkit-meter-bar,
+.fallback-meter {
+    background: #333;
+    border:1px solid #444;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+    border-radius: 1.5em;
+}
+meter::-webkit-meter-optimum-value,
+.fallback-meter span {
+    background: var(--green);
+    border-radius: 1.5em;
+}
+
+meter::-webkit-meter-suboptimum-value {
+    background: #FFDB1A; /* Yellow */
+    border-radius: 1.5em;
+}
+
+meter::-webkit-meter-even-less-good-value {
+    background: #CC4600; /* Red */
+    border-radius: 1.5em;
+}
+
+.results {
+    color: #fff;
+}

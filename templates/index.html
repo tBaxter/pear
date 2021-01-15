@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Pear!{% endblock %}
+
+{% block main %}
+
+<form action="" method="post" id="mainform">
+    {{ form.csrf }}
+    <div class="text">
+        {{ form.text1.label }}
+        {{ form.text1 }}
+        <p>{{ form.text1.description }}</p>
+    </div>
+    <div class="text">
+        {{ form.text2.label }}
+        {{ form.text2 }}
+        <p>{{ form.text2.description }}</p>
+    </div>
+    <div class="submit">
+        {{ form.submit }}
+        {% if errors %}
+        Error! {{ errors }}
+        {% endif %}
+    </div>
+</form>
+
+{% if overlap %}
+<div class="results">
+    <div class="theirs">
+        <table>
+            <caption>Their most common words:</caption>
+            {% for k, v in their.most_common %}
+            <tr>
+                <th>{{ k }}</th>
+                <td>{{ v }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div>
+            <h3>Their most-used phrases:</h3>
+            <ul>
+                {% for phrase in their.phrases %}
+                <li>{{ phrase }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="yours">
+        <table>
+            <caption>Your most common words:</caption>
+            {% for k, v in your.most_common %}
+            <tr>
+                <th>{{ k }}</th>
+                <td>{{ v }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div>
+            <h3>Your most-used phrases:</h3>
+            <ul>
+                {% for phrase in your.phrases %}
+                <li>{{ phrase }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
