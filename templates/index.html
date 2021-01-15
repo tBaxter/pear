@@ -24,6 +24,8 @@
 </form>
 
 {% if overlap %}
+<h2 class="overlap">The documents are about {{ overlap|round|int }}% similar.</h2>
+
 <div class="results">
     <div class="theirs">
         <table>

@@ -68,6 +68,10 @@ h1 { font-weight: normal }
     color:rgb(30, 190, 70)
 }
 
+.overlap {
+    text-align: center;
+    color: #eee
+}
 .flex-container {
     display: flex; /* or inline-flex */
     flex-wrap: wrap;
