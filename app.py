@@ -59,7 +59,7 @@ def index():
 
         # what do we want to throw out?
         # Note: consider a regex to strip punctuation more cleanly
-        punctuation = ['(', ')', ';', '-', ':', '[', ']', ',', '.', '#', '%', "'s", '“', '”', '’']
+        punctuation = ['(', ')', ';', '-', '–', '&', ':', '[', ']', ',', '.', '#', '%', "'s", '“', '”', '’']
         stop_words = stopwords.words('english')
         stop_words += ADDITIONAL_STOPWORDS
 
