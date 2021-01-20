@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon" href="icon.png">
     <!-- Place favicon.ico in the root directory -->
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?u=a" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?u=b" />
 </head>
 
 <body>
@@ -26,6 +26,7 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="js/app.js"></script>
     -->
+    {% block lowerjs %}{% endblock %}
 </body>
 
 </html>

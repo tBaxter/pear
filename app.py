@@ -83,12 +83,20 @@ def index():
         their_common_words = nltk.FreqDist(their_keywords).most_common(25)
         your_common_words = nltk.FreqDist(your_keywords).most_common(25)
 
-        # now what's the overlap?
+        # now what's the total overlap? Use the full word stack
         their_set = set(their_keywords)
         your_set = set(your_keywords)
 
-        overlap = their_set & your_set
-        overlap_result = float(len(overlap)) / len(their_set) * 100
+        overall_overlap = their_set & your_set
+        overall_overlap_result = float(len(overall_overlap)) / len(their_set) * 100
+
+        # What about among the keywords?
+        print([item[0] for item in their_common_words])
+        their_set = set([item[0] for item in their_common_words])
+        your_set = set([item[0] for item in your_common_words])
+
+        common_overlap = their_set & your_set
+        common_overlap_result = float(len(common_overlap)) / len(their_set) * 100
 
         # OK, but keywords are nice,
         # but if we really want to be speaking their language,
@@ -144,7 +152,8 @@ def index():
     templateData = {
       'form': form,
       'errors': errors,
-      'overlap': overlap_result,
+      'overlap': overall_overlap_result,
+      'common_overlap': common_overlap_result,
       'their': their_dict,
       'your': your_dict
     }
