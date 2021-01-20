@@ -35,7 +35,8 @@ def index():
 
     form = PearForm()
     errors = form.errors
-    overlap_result = None
+    overall_overlap_result = None
+    common_overlap_result = None
     their_dict = None
     your_dict = None
     
