@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
+import gensim
 import nltk
 from nltk import FreqDist
 from nltk.collocations import *
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from nltk.stem.porter import PorterStemmer
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 app = Flask(__name__)
 # Used in development to force reloading of static assets
@@ -42,43 +42,57 @@ def index():
     
     #if form.validate_on_submit():
     if request.method == 'POST':
-        # Get form submission text, 
-        # strip newlines cause we just don't care, 
-        # and cast to lowercase for consistency
-        their_text = form.text1.data.replace('\n', '').lower()
-        your_text = form.text2.data.replace('\n', '').lower()
+        # Get form submission and do some quick initial cleanup:
+        # Strip newlines, cast to lowercase for consistency,
+        # and in case of and/or construction, split to extract both words.
+        their_text = form.text1.data.replace('\n', '').lower().replace('/', " ")
+        your_text = form.text2.data.replace('\n', '').lower().replace('/', " ")
+        # TO-DO: consider splitting on hyphens and/or use a regex, too.
 
-        # In the case people do lots of and/or constructions,
-        # split so we extract from both sides of the slash:
-        their_text = their_text.replace('/', " ")
-        your_text = your_text.replace('/', " ")
-        # TO-DO: consider splitting on hyphens, too.
+        # Now we'll tokenize the sentences
+        their_sentence_tokens = sent_tokenize(their_text)
+        your_sentence_tokens = sent_tokenize(your_text)
 
-        # now extract the word tokens with NLTK
-        their_tokens = word_tokenize(their_text)
-        your_tokens = word_tokenize(your_text)
-
-        # what do we want to throw out?
+        # Build our collection of stopwords and other unwanted items.
         # Note: consider a regex to strip punctuation more cleanly
         punctuation = ['(', ')', ';', '-', '–', '&', ':', '[', ']', ',', '.', '#', '%', "'s", '“', '”', '’']
         stop_words = stopwords.words('english')
         stop_words += ADDITIONAL_STOPWORDS
+        
+        # Then get the individual word tokens. We could probably do this in a list comprehension,
+        # but since we need to clean it up, a loop seems easier to read.
+        their_keywords = your_keywords = []
+        for sentence in their_sentence_tokens:
+            # first word tokenize, tossing out stopwords and punctuation.
+            words = [word for word in word_tokenize(sentence) if not word in stop_words and not word in punctuation]
+            # Now we're going to use NLTK to find root words (lemmatization)
+            # See: https://textminingonline.com/dive-into-nltk-part-iv-stemming-and-lemmatization
+            lemmatizer = WordNetLemmatizer()
+            their_lem_words = [lemmatizer.lemmatize(word) for word in words]
+            # and now a second pass to pick up any verbs remaining and append it
+            their_keywords.append([lemmatizer.lemmatize(word, pos='v') for word in their_lem_words])
+
+
+
+        #their_tokens = [[w for w in word_tokenize(sentence)] for sentence in their_sentence_tokens]
+        #your_tokens = [[w for w in word_tokenize(sentence)] for sentence in their_sentence_tokens]
 
         # quick list comprehensions to strip out unwanted punctuation and stopwords
-        their_words = [word for word in their_tokens if not word in stop_words and not word in punctuation]
-        your_words = [word for word in your_tokens if not word in stop_words and not word in punctuation]
+        #their_words = [word for word in their_tokens if not word in stop_words and not word in punctuation]
+        #your_words = [word for word in your_tokens if not word in stop_words and not word in punctuation]
 
-        # Now we're going to use NLTK to find root words (lemmatization)
-        # ee:
-        # https://textminingonline.com/dive-into-nltk-part-iv-stemming-and-lemmatization
-        # For a quick primer on more great stuff we can do with NLTK, see
-        # https://likegeeks.com/nlp-tutorial-using-python-nltk/
-        lemmatizer = WordNetLemmatizer()
-        their_lem_words = [lemmatizer.lemmatize(word) for word in their_words]
-        your_lem_words = [lemmatizer.lemmatize(word) for word in your_words]
-        # and now a second pass to pick up any verbs remaining
-        their_keywords = [lemmatizer.lemmatize(word, pos='v') for word in their_lem_words]
-        your_keywords = [lemmatizer.lemmatize(word, pos='v') for word in your_lem_words]
+        
+        their_gs_dict = gensim.corpora.Dictionary(their_keywords)
+        print(their_gs_dict.token2id)
+
+        # now create the bag of words
+        # usage of gensim here is based on 
+        # https://dev.to/coderasha/compare-documents-similarity-using-python-nlp-4odp
+        their_corpus = [dictionary.doc2bow(their_keywords) for their_keywords in their_keywords]
+
+        #your_gs_dict = gensim.corpora.Dictionary(your_keywords)
+
+        #print(their_gs_dict.token2id)
 
         # And now get the frequency of keywords
         their_common_words = nltk.FreqDist(their_keywords).most_common(25)
@@ -92,7 +106,6 @@ def index():
         overall_overlap_result = float(len(overall_overlap)) / len(their_set) * 100
 
         # What about among the keywords?
-        print([item[0] for item in their_common_words])
         their_set = set([item[0] for item in their_common_words])
         your_set = set([item[0] for item in your_common_words])
 
