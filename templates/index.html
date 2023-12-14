@@ -3,16 +3,30 @@
 
 {% block main %}
 
-{% include 'includes/form.html' %}
+  {% include 'includes/form.html' %}
 
-{% if overlap %}
-<h2 class="overlap">The documents are about {{ overlap|round|int }}% similar.</h2>
-<h3 class="overlap">The most commonly used words are about {{ common_overlap|round|int }}% similar.</h3>
+  {% if overlap %}
+    <h2 class="overlap">The documents are about {{ overlap|round|int }}% similar overall.</h2>
+    <h3 class="overlap">The most commonly used words are about {{ common_overlap_score|round|int }}% similar.</h3>
 
 <div class="results">
-    <div class="theirs">
+    <div class="common">
         <table>
-            <caption>Their most common words:</caption>
+            <caption>Your best matches:</caption>
+            <thead>
+                <tr><th></th><th>Them</th><th>You</th></tr>
+            </thead>
+            {% for k, v in common_dict.items() %}
+            <tr>
+                <th>{{ k }}</th>
+                <th>{{ v.0 }}</th>
+                <th>{{ v.1 }}</th>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <table>
+            <caption>Their most common words you missed:</caption>
             {% for k, v in their.most_common %}
             <tr>
                 <th>{{ k }}</th>

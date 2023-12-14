@@ -35,8 +35,10 @@ def index():
 
     form = PearForm()
     errors = form.errors
+    common_overlap = None
     overall_overlap_result = None
-    common_overlap_result = None
+    common_overlap_score = None
+    common_dict = {}
     their_dict = None
     your_dict = None
     
@@ -63,7 +65,7 @@ def index():
 
         # what do we want to throw out?
         # Note: consider a regex to strip punctuation more cleanly
-        punctuation = ['(', ')', ';', '-', '–', '&', ':', '[', ']', ',', '.', '#', '%', "'s", '“', '”', '’']
+        punctuation = ['(', ')', ';', '-', '–', '&', ':', '[', ']', ',', '.', '#', '%', "'s", '“', '”', '’', '‘']
         stop_words = stopwords.words('english')
         stop_words += ADDITIONAL_STOPWORDS
 
@@ -83,24 +85,30 @@ def index():
         their_keywords = [lemmatizer.lemmatize(word, pos='v') for word in their_lem_words]
         your_keywords = [lemmatizer.lemmatize(word, pos='v') for word in your_lem_words]
 
-        # And now get the frequency of keywords
-        their_common_words = nltk.FreqDist(their_keywords).most_common(25)
-        your_common_words = nltk.FreqDist(your_keywords).most_common(25)
-
-        # now what's the total overlap? Use the full word stack
+        # And now get the frequency of keywords, capped loosely at 100
+        # because at this point we want to capture even loose matches.
+        their_common_words = nltk.FreqDist(their_keywords).most_common(100)
+        your_common_words = nltk.FreqDist(your_keywords).most_common(100)
+        
+        # now what's the total overlap between our words and theirs?
         their_set = set(their_keywords)
-        your_set = set(your_keywords)
-
-        overall_overlap = their_set & your_set
+        overall_overlap = their_set & set(your_keywords)
         overall_overlap_result = float(len(overall_overlap)) / len(their_set) * 100
 
         # What about among the keywords?
-        # print([item[0] for item in their_common_words])
         their_set = set([item[0] for item in their_common_words])
         your_set = set([item[0] for item in your_common_words])
 
         common_overlap = their_set & your_set
-        common_overlap_result = float(len(common_overlap)) / len(their_set) * 100
+        common_overlap_score = float(len(common_overlap)) / len(their_set) * 100
+        
+        # now build out the common dict showing their usage count and ours
+        # because their_common_words and your_common_words are list of tuples,
+        # we're going to throw them into dicts to cut down on traversal
+        their_words_dict = dict(their_common_words)
+        your_words_dict = dict(your_common_words)
+        for key in common_overlap:
+            common_dict[key] = (their_words_dict[key], your_words_dict[key])
 
         # OK, keywords are nice,
         # but if we really want to be speaking their language,
@@ -141,23 +149,29 @@ def index():
         # quick cleanup
         your_phrases = [" ".join(phrase) for phrase in your_phrases][0:10]
 
+        # remove matching words from their list and just show the ones you missed
+        # here we're slicing words you missed down to a more reasonable number
+        words_you_missed = [item for item in their_common_words if item[0] not in common_dict][0:20]
         their_dict = {
             'text': their_text,
             'keywords': their_keywords,
-            'most_common': their_common_words,
+            'most_common': words_you_missed,
             'phrases': their_phrases
         }
+        
         your_dict = {
             'text': your_text,
             'keywords': your_keywords,
-            'most_common': your_common_words,
+            'most_common': your_common_words[0:20],
             'phrases': your_phrases
         }
     templateData = {
       'form': form,
       'errors': errors,
       'overlap': overall_overlap_result,
-      'common_overlap': common_overlap_result,
+      'common_overlap': common_overlap,
+      'common_overlap_score': common_overlap_score,
+      'common_dict': common_dict,
       'their': their_dict,
       'your': your_dict
     }
