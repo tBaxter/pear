@@ -16,17 +16,50 @@
     <!-- Place favicon.ico in the root directory -->
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?u=b" />
+    <script src="{{ url_for('static', filename='js/htmx.min.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/site.js') }}?u=c" defer></script>
 </head>
 
 <body>
-    <main>
+    <main id="main">
         {% block main %}{% endblock %}
     </main>
-    <!--
-    <script src="https://unpkg.com/vue"></script>
-    <script src="js/app.js"></script>
-    -->
-    {% block lowerjs %}{% endblock %}
+
+    {% block lowerjs %}
+<script>
+   //document.body.addEventListener('htmx:afterSwap', function(evt) {
+    //htmx.onLoad(function(target) {
+    document.body.onload = function(){
+        htmx.on("htmx:afterSwap", (e) => {
+            // First, clear out matches
+            document.querySelectorAll("table th.matched").forEach(e => e.classList.remove("matched"));
+            
+            console.log('attempting to highlight', e);
+            // to easily find matches, we'll map out the values of the nodelist
+            const their_words = document.querySelectorAll(".theirs table th");
+            const your_words = document.querySelectorAll(".yours table th");
+
+            // To easily find matches, we'll pull the values out to arrays.
+            const their_words_arr = Array.from(their_words.values(), item => item.textContent);
+            const your_words_arr = Array.from(your_words.values(), item => item.textContent);
+            
+            // Then we'll see if a given given word in our list
+            // is found in their array
+            for (var cell of your_words) {
+                if (their_words_arr.includes(cell.textContent)) {
+                    cell.className += "matched"
+                }
+            };
+            // And then the other way
+            for (var cell of their_words) {
+                if (your_words_arr.includes(cell.textContent)) {
+                    cell.className += "matched"
+                }
+            };
+        });
+    };
+  </script>
+{% endblock %}
 </body>
 
 </html>

@@ -1,0 +1,20 @@
+
+<form action="" method="post" id="mainform" hx-post="/" hx-target="#main">
+    {{ form.csrf }}
+    <div class="text">
+        {{ form.text1.label }}
+        {{ form.text1 }}
+        <p>{{ form.text1.description }}</p>
+    </div>
+    <div class="text">
+        {{ form.text2.label }}
+        {{ form.text2 }}
+        <p>{{ form.text2.description }}</p>
+    </div>
+    <div class="submit">
+        {{ form.submit }}
+        {% if errors %}
+        Error! {{ errors }}
+        {% endif %}
+    </div>
+</form>

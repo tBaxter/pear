@@ -21,7 +21,7 @@ app.config['SECRET_KEY'] = 'abc123'
 
 # If you want to add additional stopwords 
 # to the set provided by NLTK, do it here
-ADDITIONAL_STOPWORDS = []
+ADDITIONAL_STOPWORDS = ['also', 'across', 'within', '—', 'ad', 'hoc']
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -45,10 +45,13 @@ def index():
         # Get form submission text, 
         # strip newlines cause we just don't care, 
         # and cast to lowercase for consistency
+        # their_text is the text you're comparing against, from the form
+        # while your_text is, well, your text, from the form.
         their_text = form.text1.data.replace('\n', '').lower()
         your_text = form.text2.data.replace('\n', '').lower()
 
         # In the case people do lots of and/or constructions,
+        # such as mama bear/papa bear/baby bear
         # split so we extract from both sides of the slash:
         their_text = their_text.replace('/', " ")
         your_text = your_text.replace('/', " ")
@@ -92,14 +95,14 @@ def index():
         overall_overlap_result = float(len(overall_overlap)) / len(their_set) * 100
 
         # What about among the keywords?
-        print([item[0] for item in their_common_words])
+        # print([item[0] for item in their_common_words])
         their_set = set([item[0] for item in their_common_words])
         your_set = set([item[0] for item in your_common_words])
 
         common_overlap = their_set & your_set
         common_overlap_result = float(len(common_overlap)) / len(their_set) * 100
 
-        # OK, but keywords are nice,
+        # OK, keywords are nice,
         # but if we really want to be speaking their language,
         # we have to think about phrases.
         # See https://stackoverflow.com/questions/2452982/how-to-extract-common-significant-phrases-from-a-series-of-text-entries
@@ -167,7 +170,18 @@ def update_nltk():
     Download and update the NLTK modules
     """
     import nltk
+    import ssl
+
+    # Resolve SSL issues that can stop your nltk download
+    try:
+        _create_unverified_https_context = ssl._create_unverified_context
+    except AttributeError:
+        pass
+    else:
+        ssl._create_default_https_context = _create_unverified_https_context
+
     nltk.download('punkt')
     nltk.download('stopwords')
     nltk.download('wordnet')
+    nltk.download('omw-1.4')
     return render_template('updated.html')

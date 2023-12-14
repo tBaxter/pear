@@ -3,25 +3,7 @@
 
 {% block main %}
 
-<form action="" method="post" id="mainform">
-    {{ form.csrf }}
-    <div class="text">
-        {{ form.text1.label }}
-        {{ form.text1 }}
-        <p>{{ form.text1.description }}</p>
-    </div>
-    <div class="text">
-        {{ form.text2.label }}
-        {{ form.text2 }}
-        <p>{{ form.text2.description }}</p>
-    </div>
-    <div class="submit">
-        {{ form.submit }}
-        {% if errors %}
-        Error! {{ errors }}
-        {% endif %}
-    </div>
-</form>
+{% include 'includes/form.html' %}
 
 {% if overlap %}
 <h2 class="overlap">The documents are about {{ overlap|round|int }}% similar.</h2>
@@ -68,33 +50,4 @@
     </div>
 </div>
 {% endif %}
-{% endblock %}
-
-
-{% block lowerjs %}
-
-<script>
-    // to easily find matches, we'll map out the values of the nodelist
-    const their_words = document.querySelectorAll(".theirs table th");
-    const your_words = document.querySelectorAll(".yours table th");
-
-    // to easily find matches, we'll map out the values
-    const their_words_arr = Array.from(their_words.values(), item => item.textContent);
-    const your_words_arr = Array.from(your_words.values(), item => item.textContent);
-
-    for (const cell of your_words) {
-        if (their_words_arr.includes(cell.textContent)) {
-            //console.log('matched: ', cell)
-            cell.className += "matched"
-        }
-    };
-    // Now go the other way
-    for (const cell of their_words) {
-        if (your_words_arr.includes(cell.textContent)) {
-            //console.log('matched: ', cell)
-            cell.className += "matched"
-        }
-    };
-</script>
-
 {% endblock %}
