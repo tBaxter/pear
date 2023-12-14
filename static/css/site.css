@@ -73,7 +73,7 @@ h1 { font-weight: normal }
     color: #eee
 }
 .flex-container {
-    display: flex; /* or inline-flex */
+    display: inline-flex; /* or inline-flex */
     flex-wrap: wrap;
     justify-content: space-between
  }
@@ -91,6 +91,8 @@ h1 { font-weight: normal }
      color:rgb(30, 190, 70)
  }
 
+ /* I think I meant to express the match with a meter and then forgot or something.
+    TO-DO: Build meter */
 meter, .fallback-meter { 
     /* Reset the default appearance */
     -webkit-appearance: none;

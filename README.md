@@ -5,7 +5,6 @@ It began because I was job hunting and I wanted to experiment with Flask, with H
 
 It is not well-tested and my understanding of Natural Language Processing is not sophisticated. Use it with that in mind and no warranty is expressed or implied. Pull requests, however, are welcomed.
 
-
 ### To run locally:
 Pipenv is recommended. If you don't have it already installed, then
 `pip install pipenv`
