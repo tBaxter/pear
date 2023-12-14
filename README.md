@@ -18,4 +18,4 @@ Then:
 pipenv shell
 flask run
 ```
-Then -- and this is an important step -- before you use the form, be sure to download and update the NLTK dependencies. You can do this by going to /update-nltk in the running app.
+Then -- and this is an important step -- before you use the form, be sure to download and update the NLTK dependencies. You can do this by going to `/update-nltk` in your browser address bar when app is running.
