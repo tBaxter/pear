@@ -19,15 +19,21 @@ body {
 
 h1 { font-weight: normal }
 
-#mainform, .results, .results > * {
+#mainform, .summary, .common {
     display: grid;
     grid-template-columns: 49% 49%;
     grid-gap: 2%;
     padding: 20px;
 }
 
+.common {
+    grid-template-columns: 23.5% 23.5% 23.5% 23.5%;
+}
+
+.results table {width: 100%}
+
 #mainform > div,
-.results > div {
+.common > div, .summary > div {
     border:1px solid #333;
     padding: 10px 20px;
     border-radius: 10px;
