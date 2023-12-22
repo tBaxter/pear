@@ -5,61 +5,84 @@
 
   {% include 'includes/form.html' %}
 
-  {% if overlap %}
-    <h2 class="overlap">The documents are about {{ overlap|round|int }}% similar overall.</h2>
+  {% if overall_overlap_score %}
+    <h2 class="overlap">These documents appear to be about {{ overall_overlap_score|round|int }}% similar overall.</h2>
+    <div class="summary">
+        <div class="">
+            <h2>Here's what we think their text is mostly about:</h2>
+            <p>{{ their_dict.summary }}</p>
+        </div>
+        <div class="">
+            <h2>And here's what we think your text is mostly about:</h2>
+            <p>{{ your_dict.summary }}</p>
+        </div>
+    </div>
     <h3 class="overlap">The most commonly used words are about {{ common_overlap_score|round|int }}% similar.</h3>
 
 <div class="results">
     <div class="common">
-        <table>
-            <caption>Your best matches:</caption>
-            <thead>
-                <tr><th></th><th>Them</th><th>You</th></tr>
-            </thead>
-            {% for k, v in common_dict.items() %}
-            <tr>
-                <th>{{ k }}</th>
-                <th>{{ v.0 }}</th>
-                <th>{{ v.1 }}</th>
-            </tr>
-            {% endfor %}
-        </table>
-
-        <table>
-            <caption>Their most common words you missed:</caption>
-            {% for k, v in their.most_common %}
-            <tr>
-                <th>{{ k }}</th>
-                <td>{{ v }}</td>
-            </tr>
-            {% endfor %}
-        </table>
         <div>
-            <h3>Their most-used phrases:</h3>
-            <ul>
-                {% for phrase in their.phrases %}
-                <li>{{ phrase }}</li>
+            <h3>Common words you matched...</h3>
+            <p>These words are among the most common words in both documents. 
+                You're speaking the same language here.
+            </p>
+            <table>
+                <thead>
+                    <tr><th></th><th>Them</th><th>You</th></tr>
+                </thead>
+                {% for k, v in common_dict.items() %}
+                <tr>
+                    <th>{{ k }}</th>
+                    <th>{{ v.0 }}</th>
+                    <th>{{ v.1 }}</th>
+                </tr>
                 {% endfor %}
-            </ul>
+            </table>
         </div>
-    </div>
-    <div class="yours">
-        <table>
-            <caption>Your most common words:</caption>
-            {% for k, v in your.most_common %}
-            <tr>
-                <th>{{ k }}</th>
-                <td>{{ v }}</td>
-            </tr>
-            {% endfor %}
-        </table>
         <div>
-            <h3>Your most-used phrases:</h3>
-            <ul>
-                {% for phrase in your.phrases %}
-                <li>{{ phrase }}</li>
+            <h3>Common words you missed...</h3>
+            <p>These words may be present, but they are not among your most common words. 
+                You might want to talk about them more.
+            </p>
+
+            <table>
+                {% for k, v in misses.items() %}
+                <tr>
+                    <th>{{ k }}</th>
+                    <td>{{ v }}</td>
+                </tr>
                 {% endfor %}
-            </ul>
+            </table>
+        </div>
+        <div>
+            <h3>Words you liked instead...</h3>
+            <p>These are the words you used the most that they didn't.</p>
+            <table>
+                {% for k, v in your_preferred_words.items() %}
+                <tr>
+                    <th>{{ k }}</th>
+                    <td>{{ v }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="phrases">
+            <div>
+                <h3>Their most-used phrases:</h3>
+                <ul>
+                    {% for phrase in their_dict.phrases %}
+                    <li>{{ phrase }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h3>Your most-used phrases:</h3>
+                <ul>
+                    {% for phrase in your_dict.phrases %}
+                    <li>{{ phrase }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
