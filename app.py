@@ -80,16 +80,13 @@ def process_text(text):
     summary = ' '.join(summary_sentences)
 
     most_common_words = {k: v for k, v in word_frequency.items() if v > 1}
-
-
     return {
-        'clean_text': clean_text,
         'sentences': sentences,
         'sentence_scores': sentence_scores,
+        'summary': summary,
         'words': words,
         'word_frequency': word_frequency,
         'word_weights': word_weights,
-        'summary': summary,
         'most_common_words': most_common_words
     }
 
@@ -145,7 +142,7 @@ def get_phrases(words):
 
     # return 20 n-grams with the highest PMI
     bi_phrases = bi_finder.nbest(bigram_measures.pmi, 20) 
-    tri_phrases = tri_finder.nbest(bigram_measures.pmi, 20)
+    tri_phrases = tri_finder.nbest(trigram_measures.pmi, 20)
     
     phrases = tri_phrases + bi_phrases     
     # quick cleanup
