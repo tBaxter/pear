@@ -1,21 +1,19 @@
 import heapq
 import itertools
 import nltk
+import os
 import re
 
 from flask import Flask, render_template, request
-#from nltk import FreqDist
 from nltk.collocations import BigramCollocationFinder, TrigramCollocationFinder
-from nltk.stem import WordNetLemmatizer
-#from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
 
-import pdb
+#import pdb
 
 app = Flask(__name__)
 
 # The below is just used in development to force reloading of static assets
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Flask-WTF requires an encryption key.
 # For testing we can use whatever, but before deploying 
@@ -116,8 +114,14 @@ def get_shared_words(their_common_words, your_common_words):
     # Note that the floor here is words present at least 3 times to reduce noise.
     misses = {k: v for k, v in their_common_words.items() if k not in your_common_words.keys() and v > 2}
     misses = dict(itertools.islice(misses.items(), COMMON_WORDS_CAP))
+    
+    # make sure we have some overlap and we're not dividing by zero
+    if len(common_overlap) == 0 or len(their_common_words.keys()) == 0:
+        common_overlap_score = 0
+    else:
+        common_overlap_score = float(len(common_overlap)) / len(their_common_words.keys()) * 100
     return {
-        'common_overlap_score': float(len(common_overlap)) / len(their_common_words.keys()) * 100,
+        'common_overlap_score': common_overlap_score,
         'common_words_dict': common_dict,
         'misses': misses
     }
@@ -158,8 +162,7 @@ def index():
     * Uploads
     * PDF extraction
     """
-    from .forms import PearForm
-
+    from forms import PearForm
     form = PearForm()
     errors = form.errors
     
@@ -208,7 +211,9 @@ def index():
 @app.route('/update-nltk')
 def update_nltk():
     """
-    Download and update the NLTK modules
+    Download and update the NLTK modules.
+    This should never need to be run, because the downloads are now 
+    initializied in the dockerfile.
     """
     import ssl
 
@@ -225,3 +230,12 @@ def update_nltk():
     nltk.download('wordnet')
     nltk.download('omw-1.4')
     return render_template('updated.html')
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 3001))
+    app.run(
+        debug=True, 
+        host='0.0.0.0', 
+        port=port
+    )

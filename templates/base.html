@@ -27,8 +27,6 @@
 
     {% block lowerjs %}
 <script>
-   //document.body.addEventListener('htmx:afterSwap', function(evt) {
-    //htmx.onLoad(function(target) {
     document.body.onload = function(){
         htmx.on("htmx:afterSwap", (e) => {
             // First, clear out matches
@@ -61,5 +59,4 @@
   </script>
 {% endblock %}
 </body>
-
 </html>
