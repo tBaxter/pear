@@ -11,7 +11,7 @@
         {{ form.text2 }}
         <p>{{ form.text2.description }}</p>
     </div>
-    <div class="submit">
+    <div class="submit" title="{{ form.submit.description }}">
         {{ form.submit }}
         {% if errors %}
         Error! {{ errors }}

@@ -7,32 +7,40 @@
     <meta name="description" content="{% block description %}{{ description }}{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta property="og:title" content="">
+    <meta property="og:title" content="{{ title }}">
     <meta property="og:type" content="">
     <meta property="og:url" content="">
-    <meta property="og:image" content="">
+    <meta property="og:image" content="{{ url_for('static', filename='img/greenpear.svg') }}">
 
-    <link rel="apple-touch-icon" href="icon.png">
-    <!-- Place favicon.ico in the root directory -->
-
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/greenpear.svg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?u=b" />
     <script src="{{ url_for('static', filename='js/htmx.min.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/site.js') }}?u=c" defer></script>
 </head>
 
 <body>
+    <header>
+        <h1>Pear</h1>
+        <h2>Compare text from two documents easily, with no sign-up or data sharing.</h2>
+      </header>
     <main id="main">
         {% block main %}{% endblock %}
     </main>
-
+    <footer>
+        Pear is a Carter Baxter/APTgroup production. &copy; 2024. 
+        You can <a href="https://github.com/tBaxter/pear">contribute to the source on Github.</a>
+    </footer>
     {% block lowerjs %}
 <script>
     document.body.onload = function(){
         htmx.on("htmx:afterSwap", (e) => {
-            // First, clear out matches
+            // scroll to results
+            document.getElementById("results").scrollIntoView({ behavior: 'smooth' });
+
+
+            // clear out matches
             document.querySelectorAll("table th.matched").forEach(e => e.classList.remove("matched"));
             
-            console.log('attempting to highlight', e);
             // to easily find matches, we'll map out the values of the nodelist
             const their_words = document.querySelectorAll(".theirs table th");
             const your_words = document.querySelectorAll(".yours table th");
