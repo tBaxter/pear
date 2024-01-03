@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Pear!{% endblock %}
+{% block title %}Pear - a simple text comparison tool{% endblock %}
 
 {% block main %}
-
   {% include 'includes/form.html' %}
-  
   {% if overall_overlap_score == 0 %}
     <h2 class="overlap">These documents do not appear to be similar at all!</h2>
-
   {% elif overall_overlap_score %}
+  <div class="results" id="results">
     <h2 class="overlap">These documents appear to be about {{ overall_overlap_score|round|int }}% similar overall.</h2>
     <div class="summary">
         <div class="">
@@ -21,10 +19,10 @@
         </div>
     </div>
     {% if common_overlap_score %}
-    <h3 class="overlap">The most commonly used words are about {{ common_overlap_score|round|int }}% similar.</h3>
 
     <div class="results">
-      <div class="common">
+        <h3 class="overlap">The most commonly used words are about {{ common_overlap_score|round|int }}% similar.</h3>
+       <div class="common">
         <div>
             <h3>Common words you matched...</h3>
             <p>These words are among the most common words in both documents. 
@@ -90,7 +88,7 @@
         </div>
     </div>
     {% endif %}
-
-</div>
+  </div>
+</div><!-- /results -->
 {% endif %}
 {% endblock %}
